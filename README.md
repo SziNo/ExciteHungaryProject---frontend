@@ -1,74 +1,78 @@
-# React + TypeScript + Vite
+# Leave Calendar — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A team leave management and on-call rotation tracker built with React, TypeScript, Tailwind CSS, and TanStack Query.
 
-Currently, two official plugins are available:
+**Live demo:** [https://excite-hungary-project-frontend.vercel.app](https://excite-hungary-project-frontend.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Backend repository:** [https://github.com/SziNo/ExciteHungaryProject---backend](https://github.com/SziNo/ExciteHungaryProject---backend)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **React 19** + **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **TanStack Query** (React Query) — server state management
+- **Axios** — HTTP client
+- **React Router** — client-side routing
+- **date-fns** — date formatting and week calculation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+For backend tech stack details, see the [backend repository](https://github.com/SziNo/ExciteHungaryProject---backend).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Local Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- Node.js 18+
+- Backend running on `http://localhost:8080` (see backend repo for setup)
+
+### Steps
+
+```bash
+git clone <this-repo-url>
+cd frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env.local` file in the `frontend/` root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
-# ExciteHungaryProject---frontend
+VITE_API_URL=http://localhost:8080
+```
+
+Then start the dev server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## Usage
+
+### Leave Requests page
+
+- **Create a leave request** — select a team member, pick a start and end date, add a reason, and hit Submit
+- **Approve or Reject** pending requests using the buttons on each card
+- **Filter** the list by team member or status (Pending / Approved / Rejected)
+- Submitting overlapping dates for the same person will show an error
+
+### On-Call Schedule page
+
+- Shows the weekly on-call rotation for Alice, Bob, Charlie, and Diana
+- Weeks where the on-call person has an approved leave are **highlighted in red** as a conflict
+- The rotation repeats every 4 weeks
+
+---
+
+## Assumptions
+
+- No authentication or user registration is required
+- Team members are fixed: Alice, Bob, Charlie, Diana
+- On-call rotation is calculated from a fixed epoch date and repeats in order
+- Overlapping leave requests are blocked unless the existing one is Rejected
