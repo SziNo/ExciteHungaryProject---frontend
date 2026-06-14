@@ -5,6 +5,7 @@ import { useCreateLeave } from "../../hooks/useLeaves";
 export const LeaveForm = () => {
   const { data: members } = useMembers();
   const { mutate: createLeave, isPending, isError, error } = useCreateLeave();
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [form, setForm] = useState({
     teamMemberId: "",
@@ -13,10 +14,26 @@ export const LeaveForm = () => {
     reason: "",
   });
 
-  const handleSubmit = () => {
-    if (!form.teamMemberId || !form.startDate || !form.endDate || !form.reason)
-      return;
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.teamMemberId)
+      newErrors.teamMemberId = "Please select a team member";
+    if (!form.startDate) newErrors.startDate = "Start date is required";
+    if (!form.endDate) newErrors.endDate = "End date is required";
+    if (form.startDate && form.endDate && form.endDate < form.startDate) {
+      newErrors.endDate = "End date cannot be before start date";
+    }
+    if (!form.reason.trim()) newErrors.reason = "Reason is required";
+    return newErrors;
+  };
 
+  const handleSubmit = () => {
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     createLeave(
       {
         teamMemberId: Number(form.teamMemberId),
@@ -38,47 +55,67 @@ export const LeaveForm = () => {
       </h2>
 
       <div className="flex flex-col gap-3">
-        <select
-          value={form.teamMemberId}
-          onChange={(e) =>
-            setForm((f) => ({ ...f, teamMemberId: e.target.value }))
-          }
-          className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select team member</option>
-          {members?.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
-
-        <div className="flex gap-3">
-          <input
-            type="date"
-            value={form.startDate}
+        <div className="flex flex-col gap-1">
+          <select
+            value={form.teamMemberId}
             onChange={(e) =>
-              setForm((f) => ({ ...f, startDate: e.target.value }))
+              setForm((f) => ({ ...f, teamMemberId: e.target.value }))
             }
-            className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="date"
-            value={form.endDate}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, endDate: e.target.value }))
-            }
-            className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select team member</option>
+            {members?.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+          {errors.teamMemberId && (
+            <p className="text-xs text-red-500">{errors.teamMemberId}</p>
+          )}
         </div>
 
-        <input
-          type="text"
-          placeholder="Reason"
-          value={form.reason}
-          onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
-          className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="flex gap-3">
+          <div className="flex-1 flex flex-col gap-1">
+            <input
+              type="date"
+              value={form.startDate}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, startDate: e.target.value }))
+              }
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.startDate && (
+              <p className="text-xs text-red-500">{errors.startDate}</p>
+            )}
+          </div>
+          <div className="flex-1 flex flex-col gap-1">
+            <input
+              type="date"
+              value={form.endDate}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, endDate: e.target.value }))
+              }
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.endDate && (
+              <p className="text-xs text-red-500">{errors.endDate}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <input
+            type="text"
+            placeholder="Reason"
+            value={form.reason}
+            onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.reason && (
+            <p className="text-xs text-red-500">{errors.reason}</p>
+          )}
+        </div>
 
         {isError && (
           <p className="text-sm text-red-600">
