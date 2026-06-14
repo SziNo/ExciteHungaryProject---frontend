@@ -25,7 +25,13 @@ export const OnCallTable = ({ weeks }: { weeks: OnCallWeek[] }) => {
           {weeks.map((week, idx) => (
             <tr
               key={`${week.weekNumber}-${week.weekStart}`}
-              className={idx % 2 === 0 ? "bg-gray-300" : ""}
+              className={
+                week.hasConflict
+                  ? "bg-red-100"
+                  : idx % 2 === 0
+                    ? "bg-gray-200"
+                    : ""
+              }
             >
               <td className="px-4 py-3 text-gray-600">
                 Week {week.weekNumber}
