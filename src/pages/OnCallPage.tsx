@@ -1,13 +1,9 @@
-import { useState } from "react";
 import { useOnCall } from "../hooks/useOnCall";
 import { getDateRangeForMonths } from "../utils/dateUtils";
 import { OnCallTable } from "../components/oncall/OnCallTable";
 
 export const OnCallPage = () => {
-  const defaultRange = getDateRangeForMonths(3);
-  const [from] = useState(defaultRange.from);
-  const [to] = useState(defaultRange.to);
-
+  const { from, to } = getDateRangeForMonths(3);
   const { data: weeks, isLoading } = useOnCall(from, to);
 
   return (
