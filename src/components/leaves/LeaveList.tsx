@@ -1,13 +1,17 @@
 import type { LeaveRequest, LeaveStatus } from "../../types/LeaveRequest";
 import { LeaveCard } from "./LeaveCard";
 
-interface Props {
+interface LeaveListProps {
   leaves: LeaveRequest[];
   memberFilter: number | undefined;
   statusFilter: LeaveStatus | undefined;
 }
 
-export const LeaveList = ({ leaves, memberFilter, statusFilter }: Props) => {
+export const LeaveList = ({
+  leaves,
+  memberFilter,
+  statusFilter,
+}: LeaveListProps) => {
   const filtered = leaves.filter((l) => {
     if (memberFilter && l.teamMemberId !== memberFilter) return false;
     if (statusFilter && l.status !== statusFilter) return false;

@@ -22,10 +22,10 @@ export const OnCallTable = ({ weeks }: { weeks: OnCallWeek[] }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {weeks.map((week) => (
+          {weeks.map((week, idx) => (
             <tr
               key={`${week.weekNumber}-${week.weekStart}`}
-              className={week.hasConflict ? "bg-red-50" : ""}
+              className={idx % 2 === 0 ? "bg-gray-300" : ""}
             >
               <td className="px-4 py-3 text-gray-600">
                 Week {week.weekNumber}
